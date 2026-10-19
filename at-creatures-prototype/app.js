@@ -31,7 +31,8 @@ const tracks = [
 ];
 const officialProfiles = {
   instagram: 'https://www.instagram.com/atari_terror_oficialni/',
-  facebook: 'https://www.facebook.com/atariterror/'
+  facebook: 'https://www.facebook.com/atariterror/',
+  spotify: 'https://open.spotify.com/artist/7tuvvz0x2oNyY8JTXRcqmp'
 };
 const selectedSongs = new Set();
 const archetypes = [
@@ -62,6 +63,14 @@ let activeScreen = null;
 let previousScreen = 'songs';
 const galleryKey = 'at-creatures-gallery-v1';
 const communityStatsKey = 'at-creatures-community-stats-v1';
+const analyticsKey = 'at-creatures-analytics-v1';
+function recordAnalyticsEvent(type, details = {}) {
+  try {
+    const events = JSON.parse(localStorage.getItem(analyticsKey) || '[]');
+    events.push({ type, at: new Date().toISOString(), ...details });
+    localStorage.setItem(analyticsKey, JSON.stringify(events.slice(-2000)));
+  } catch { /* Local prototype measurement is best-effort. */ }
+}
 const demoTrackPicks = { 'Eve': 68, 'Insane': 54, 'Mother': 47, 'Chosen One': 42, 'Airbag Death': 36, 'Ghost of the Bloodbath': 31, 'Bright Sun': 28 };
 const demoCardPoints = { 'sample-0': 83, 'sample-1': 69, 'sample-2': 57, 'sample-3': 44 };
 const introFaceLandmarks = [
@@ -386,7 +395,7 @@ function goTo(name) {
 function returnHome() {
   document.getElementById('landing-screen').hidden = false;
   document.getElementById('app-shell').hidden = true;
-  document.querySelector('.site-footer').hidden = true;
+  document.querySelector('.site-footer').hidden = false;
   document.getElementById('return-home').hidden = true;
   activeScreen = null;
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -406,7 +415,10 @@ function generateCreature(reroll) {
   const artworkIndex = nextArtworkIndex();
   generated = { ...archetypes[archetypeIndex], archetypeIndex, artworkIndex, artworkData: getCreatureArtworkData(artworkIndex), songProfiles, id: globalThis.crypto?.randomUUID?.() || `card-${Date.now()}-${Math.random().toString(16).slice(2)}` };
   if (reroll) generationCount += 1;
-  if (!reroll) recordTrackPicks(songProfiles);
+  if (!reroll) {
+    recordTrackPicks(songProfiles);
+    recordAnalyticsEvent('creature_created', { selectedTrackCount: songProfiles.length, tracks: songProfiles.map(track => track.title), symbol: generated.symbol });
+  }
   document.getElementById('creature-class').textContent = generated.faction;
   document.getElementById('result-title').innerHTML = generated.name.replace(' ', '<br><em>') + '</em>';
   document.getElementById('creature-quote').textContent = generated.quote;
@@ -469,7 +481,7 @@ const shareFormats = {
   facebook: { feed: [1200, 630, 'Příspěvek 1.91:1'], story: [1080, 1920, 'Příběh 9:16'], square: [1080, 1080, 'Čtverec 1:1'] }
 };
 function socialCardSvg(platform, format) {
-  const [width, height] = shareFormats[platform]?.[format] || shareFormats.instagram.feed;
+  const [width, height] = shareFormats[platform]?.[format] || shareFormats.instagram[format] || shareFormats.instagram.feed;
   const margin = Math.round(width * .055);
   const portrait = height > width * 1.1;
   const artTop = portrait ? Math.round(height * .055) : Math.round(height * .08);
@@ -480,13 +492,29 @@ function socialCardSvg(platform, format) {
   const footerTop = artTop + artHeight + margin;
   const footerCenter = width / 2;
   const titleSize = Math.max(28, Math.round(width * (portrait ? .064 : .058)));
-  const songList = (generated.songProfiles || []).slice(0, 5).map((track, i) => `<a href="${spotifyTrackUrl(track)}"><text x="${margin + 20}" y="${footerTop + (portrait ? 146 : 118) + i * Math.max(20, Math.round(width * .027))}" fill="#eee6d5" font-family="Arial" font-size="${Math.max(15, Math.round(width * .019))}">♫  ${xmlEscape(track.title)}</text></a>`).join('');
-  const profile = officialProfiles[platform];
-  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#24211c"/><stop offset="1" stop-color="#090909"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#bg)"/><rect x="${Math.round(margin*.42)}" y="${Math.round(margin*.42)}" width="${width - margin*.84}" height="${height - margin*.84}" fill="none" stroke="#d4b63f" stroke-width="2"/><image href="${xmlEscape(art)}" x="${margin}" y="${artTop}" width="${artWidth}" height="${artHeight}" preserveAspectRatio="xMidYMid slice"/><path d="M${margin} ${footerTop}h${artWidth}" stroke="#d84a38" stroke-width="3"/><text x="${footerCenter}" y="${footerTop + 34}" text-anchor="middle" fill="#d4b63f" font-family="Arial" font-size="${Math.max(13, Math.round(width*.018))}" letter-spacing="4">ZNAK SMEČKY · ${xmlEscape(generated.symbol)} ${xmlEscape(sigilNames[generated.symbol] || 'SIGNÁL')}</text><text x="${footerCenter}" y="${footerTop + (portrait ? 102 : 78)}" text-anchor="middle" fill="#f1e6cd" font-family="Georgia,serif" font-weight="bold" font-size="${titleSize}">${xmlEscape(generated.name)}</text><text x="${footerCenter}" y="${footerTop + (portrait ? 130 : 104)}" text-anchor="middle" fill="#d4b63f" font-family="Arial" font-size="${Math.max(13, Math.round(width*.018))}" letter-spacing="2">${xmlEscape(generated.faction)}</text>${songList}<text x="${footerCenter}" y="${height - margin * .95}" text-anchor="middle" fill="#c2b8a5" font-family="Arial" font-size="${Math.max(12, Math.round(width*.015))}">ATARI TERROR CREATURES · ${xmlEscape(profile)}</text></svg>`;
+  const message = document.getElementById('share-message')?.value.trim() || '';
+  const messageLines = wrapShareMessage(message, portrait ? 46 : 72).slice(0, 2);
+  const messageSvg = messageLines.map((line, i) => `<text x="${footerCenter}" y="${footerTop + (portrait ? 143 : 116) + i * Math.max(18, Math.round(width * .023))}" text-anchor="middle" fill="#f1e6cd" font-family="Arial" font-size="${Math.max(13, Math.round(width * .018))}">${xmlEscape(line)}</text>`).join('');
+  const songList = (generated.songProfiles || []).slice(0, 5).map((track, i) => `<text x="${margin + 20}" y="${footerTop + (portrait ? 194 : 164) + i * Math.max(20, Math.round(width * .027))}" fill="#eee6d5" font-family="Arial" font-size="${Math.max(15, Math.round(width * .019))}">♫  ${xmlEscape(track.title)}</text>`).join('');
+  const profile = officialProfiles[platform] || 'ATARITERROR';
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#24211c"/><stop offset="1" stop-color="#090909"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#bg)"/><rect x="${Math.round(margin*.42)}" y="${Math.round(margin*.42)}" width="${width - margin*.84}" height="${height - margin*.84}" fill="none" stroke="#d4b63f" stroke-width="2"/><image href="${xmlEscape(art)}" x="${margin}" y="${artTop}" width="${artWidth}" height="${artHeight}" preserveAspectRatio="xMidYMid slice"/><path d="M${margin} ${footerTop}h${artWidth}" stroke="#d84a38" stroke-width="3"/><text x="${footerCenter}" y="${footerTop + 34}" text-anchor="middle" fill="#d4b63f" font-family="Arial" font-size="${Math.max(13, Math.round(width*.018))}" letter-spacing="4">ZNAK SMEČKY · ${xmlEscape(generated.symbol)} ${xmlEscape(sigilNames[generated.symbol] || 'SIGNÁL')}</text><text x="${footerCenter}" y="${footerTop + (portrait ? 92 : 76)}" text-anchor="middle" fill="#f1e6cd" font-family="Georgia,serif" font-weight="bold" font-size="${titleSize}">${xmlEscape(generated.name)}</text><text x="${footerCenter}" y="${footerTop + (portrait ? 116 : 98)}" text-anchor="middle" fill="#d4b63f" font-family="Arial" font-size="${Math.max(13, Math.round(width*.018))}" letter-spacing="2">${xmlEscape(generated.faction)}</text>${messageSvg}${songList}<text x="${footerCenter}" y="${height - margin * .95}" text-anchor="middle" fill="#c2b8a5" font-family="Arial" font-size="${Math.max(12, Math.round(width*.015))}">ATARI TERROR CREATURES · ${xmlEscape(profile)}</text></svg>`;
+}
+function wrapShareMessage(message, maxChars) {
+  const words = message.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > maxChars && line) { lines.push(line); line = word; }
+    else line = next;
+  }
+  if (line) lines.push(line);
+  return lines;
 }
 async function downloadSocialImage(platform, format) {
+  recordAnalyticsEvent('share_image_download', { platform, format });
   const svg = socialCardSvg(platform, format);
-  const [width, height] = shareFormats[platform][format];
+  const [width, height] = shareFormats[platform]?.[format] || shareFormats.instagram[format] || shareFormats.instagram.feed;
   const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
   const svgUrl = URL.createObjectURL(svgBlob);
   try {
@@ -503,29 +531,52 @@ async function downloadSocialImage(platform, format) {
     downloadSvg(`at-creature-${platform}-${format}.svg`, svg);
   } finally { URL.revokeObjectURL(svgUrl); }
 }
-function shareCaption(platform) {
+function shareCaption(platform, message = '') {
   const tracksLine = (generated.songProfiles || []).map(track => `${track.title}: ${spotifyTrackUrl(track)}`).join('\n');
-  return `Moje Atari Terror bytost: ${generated.name} ${generated.symbol}\n${generated.quote}\n${tracksLine ? `Moje soundtrack skladby:\n${tracksLine}\n` : ''}Najdi si svou bytost: ${location.href}\nAtari Terror: ${officialProfiles[platform]}`;
+  const personalText = message.trim() || `Moje Atari Terror bytost: ${generated.name} ${generated.symbol}`;
+  const destination = { instagram: 'Instagram', facebook: 'Facebook', whatsapp: 'WhatsApp', tiktok: 'TikToku', x: 'síti X', other: 'jinde / ve zprávě' }[platform] || platform;
+  const bandSocials = `${officialProfiles.instagram}\n${officialProfiles.facebook}`;
+  return `${personalText}\n\n${tracksLine ? `Moje soundtrack skladby:\n${tracksLine}\n` : ''}Chystám sdílet přes: ${destination}\nNajdi si svou bytost: ${location.href}\nAtari Terror na sociálních sítích:\n${bandSocials}\nAtari Terror na Spotify: ${officialProfiles.spotify}`;
 }
 function showShareDialog() {
   const dialog = document.getElementById('preview-dialog');
   dialog.classList.remove('community-gallery-lightbox');
-  document.getElementById('dialog-content').innerHTML = `<section class="share-panel"><p class="eyebrow">SDÍLEJ SVOU BYTOST</p><h2>PŘIPRAVIT KARTU</h2><p>Stáhne se obrázek ve velikosti vybrané sítě. Odkazy na skladby a profil kapely přidej do popisku příspěvku.</p><label>PLATFORMA<select id="share-platform"><option value="instagram">Instagram</option><option value="facebook">Facebook</option></select></label><label>FORMÁT<select id="share-format"><option value="feed">Příspěvek 4:5</option><option value="story">Příběh 9:16</option><option value="square">Čtverec 1:1</option></select></label><div class="share-actions"><button class="primary-button" id="download-share-image" type="button">STÁHNOUT OBRÁZEK ↓</button><button class="secondary-button" id="copy-share-caption" type="button">KOPÍROVAT POPISEK</button></div><p class="share-profile">Oficiální profil: <a id="share-profile-link" href="${officialProfiles.instagram}" target="_blank" rel="noopener noreferrer">Instagram Atari Terror ↗</a></p><p class="feedback" id="share-feedback" role="status" aria-live="polite"></p></section>`;
+  document.getElementById('dialog-content').innerHTML = `<section class="share-panel"><p class="eyebrow">SDÍLEJ SVOU BYTOST</p><h2>PŘIPRAVIT KARTU</h2><p>Uprav si vlastní text. Objeví se na kartě i v připraveném popisku. Po zveřejnění můžeš sdílení potvrdit a vybrat síť.</p><label>TVŮJ TEXT<textarea id="share-message" maxlength="90" rows="3" placeholder="Dopiš vlastní větu k bytosti…"></textarea><small id="share-message-count">0 / 90</small></label><label>KAM JSI SDÍLEL/A?<select id="share-platform"><option value="instagram">Instagram</option><option value="facebook">Facebook</option><option value="whatsapp">WhatsApp</option><option value="tiktok">TikTok</option><option value="x">X</option><option value="other">Jinde / ve zprávě</option></select></label><label>FORMÁT<select id="share-format"><option value="feed">Příspěvek 4:5</option><option value="story">Příběh 9:16</option><option value="square">Čtverec 1:1</option></select></label><div class="share-actions"><button class="primary-button" id="download-share-image" type="button">STÁHNOUT OBRÁZEK ↓</button><button class="secondary-button" id="copy-share-caption" type="button">KOPÍROVAT POPISEK</button></div><button class="secondary-button" id="confirm-share" type="button" style="margin-top:10px;width:100%;justify-content:center">UŽ JSEM TO SDÍLEL/A</button><p class="share-profile">Odkazy kapely: <a id="share-profile-link" href="${officialProfiles.instagram}" target="_blank" rel="noopener noreferrer">Instagram Atari Terror ↗</a></p><p class="feedback" id="share-feedback" role="status" aria-live="polite"></p><p class="share-profile">Potvrzení je založené na tvém ohlášení; aplikace příspěvek na síti sama neověří.</p></section>`;
   const platform = document.getElementById('share-platform');
   const format = document.getElementById('share-format');
+  const message = document.getElementById('share-message');
+  const messageCount = document.getElementById('share-message-count');
   const profileLink = document.getElementById('share-profile-link');
+  const confirmButton = document.getElementById('confirm-share');
+  const feedback = document.getElementById('share-feedback');
+  const shareWasConfirmed = selectedPlatform => {
+    try { return JSON.parse(localStorage.getItem(analyticsKey) || '[]').some(event => event.type === 'share_confirmed' && event.cardId === generated.id && event.platform === selectedPlatform); }
+    catch { return false; }
+  };
   const sync = () => {
-    const isInstagram = platform.value === 'instagram';
-    format.options[0].textContent = isInstagram ? 'Příspěvek 4:5' : 'Příspěvek 1.91:1';
-    profileLink.href = officialProfiles[platform.value];
-    profileLink.textContent = `${isInstagram ? 'Instagram' : 'Facebook'} Atari Terror ↗`;
+    const isFacebook = platform.value === 'facebook';
+    format.options[0].textContent = isFacebook ? 'Příspěvek 1.91:1' : 'Příspěvek 4:5';
+    profileLink.href = isFacebook ? officialProfiles.facebook : officialProfiles.instagram;
+    profileLink.textContent = `${isFacebook ? 'Facebook' : 'Instagram'} Atari Terror ↗`;
+    const confirmed = shareWasConfirmed(platform.value);
+    confirmButton.disabled = confirmed;
+    confirmButton.textContent = confirmed ? 'SDÍLENÍ UŽ JE ZAZNAMENANÉ ✓' : 'UŽ JSEM TO SDÍLEL/A';
   };
   platform.addEventListener('change', sync); sync();
+  message.addEventListener('input', () => { messageCount.textContent = `${message.value.length} / 90`; });
   document.getElementById('download-share-image').addEventListener('click', () => downloadSocialImage(platform.value, format.value));
   document.getElementById('copy-share-caption').addEventListener('click', async () => {
-    const feedback = document.getElementById('share-feedback');
-    try { await navigator.clipboard.writeText(shareCaption(platform.value)); feedback.textContent = 'Popisek včetně odkazů na skladby a oficiální profil je zkopírovaný.'; }
-    catch { feedback.textContent = shareCaption(platform.value); }
+    const caption = shareCaption(platform.value, message.value);
+    recordAnalyticsEvent('share_caption_copy', { platform: platform.value });
+    try { await navigator.clipboard.writeText(caption); feedback.textContent = 'Popisek včetně tvého textu a odkazů je zkopírovaný.'; }
+    catch { feedback.textContent = caption; }
+  });
+  confirmButton.addEventListener('click', () => {
+    if (shareWasConfirmed(platform.value)) { sync(); return; }
+    const channelNames = { instagram: 'Instagram', facebook: 'Facebook', whatsapp: 'WhatsApp', tiktok: 'TikTok', x: 'X', other: 'jinde / ve zprávě' };
+    recordAnalyticsEvent('share_confirmed', { platform: platform.value, cardId: generated.id, format: format.value });
+    feedback.textContent = `Díky! Zaznamenal jsem tvoje potvrzení sdílení přes ${channelNames[platform.value]}.`;
+    sync();
   });
   dialog.showModal();
 }
@@ -545,6 +596,7 @@ function writeCommunityStats(stats) {
 }
 function recordTrackPicks(songProfiles) {
   if (!songProfiles.length) return;
+  recordAnalyticsEvent('songs_selected', { tracks: songProfiles.map(track => track.title) });
   const stats = readCommunityStats();
   songProfiles.forEach(track => { stats.songPicks[track.title] = (stats.songPicks[track.title] || 0) + 1; });
   writeCommunityStats(stats);
@@ -673,12 +725,19 @@ startIntroFaceLoop();
 updateGalleryCount();
 renderCommunityGallery();
 renderTrending();
-document.getElementById('start-app').addEventListener('click', () => goTo('songs'));
+document.getElementById('start-app').addEventListener('click', () => { recordAnalyticsEvent('app_started'); goTo('songs'); });
 document.getElementById('brand-home').addEventListener('click', event => { event.preventDefault(); returnHome(); });
 document.getElementById('return-home').addEventListener('click', returnHome);
 document.getElementById('unknown-song').addEventListener('click', () => {
   const track = tracks[Math.floor(Math.random() * tracks.length)];
+  recordAnalyticsEvent('spotify_outbound_click', { track: track.title, source: 'unknown-song' });
   window.open(spotifyTrackUrl(track), '_blank', 'noopener,noreferrer');
+});
+songList.addEventListener('click', event => {
+  const spotifyLink = event.target.closest('.song-spotify');
+  if (!spotifyLink) return;
+  const index = Number(spotifyLink.closest('.song-item')?.querySelector('[data-track-index]')?.dataset.trackIndex);
+  if (Number.isInteger(index) && tracks[index]) recordAnalyticsEvent('spotify_outbound_click', { track: tracks[index].title, source: 'song-list' });
 });
 document.querySelectorAll('[data-next]').forEach(button => button.addEventListener('click', () => goTo(button.dataset.next)));
 document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => goTo(button.dataset.back)));
