@@ -299,3 +299,6 @@ canvas.face-frame{object-fit:contain}
 .spotify-launch{display:grid;place-items:center;width:26px;height:26px;border:1px solid currentColor;color:var(--yellow);flex:none}
 .spotify-link-label{display:inline}
 @media(max-width:760px){.song-spotify{gap:0;color:var(--yellow)}.song-spotify .spotify-link-label{display:none}.spotify-unknown .spotify-launch{width:25px;height:25px}.line-arrow{width:15px;height:15px}}
+
+.song-interpretation a{color:var(--yellow);text-decoration:underline;text-underline-offset:2px}.song-interpretation a:hover{color:#fff}
+.share-panel{padding:14px 8px 6px}.share-panel h2{margin:4px 0 12px;font-size:26px;letter-spacing:-.03em}.share-panel>p:not(.eyebrow){color:var(--muted);font-size:11px;line-height:1.55}.share-panel label{display:grid;gap:7px;margin:16px 0;color:var(--yellow);font-size:9px;font-weight:800;letter-spacing:.1em}.share-panel select{width:100%;padding:12px;background:#10100f;color:var(--paper);border:1px solid #ffffff35;font:inherit;font-size:12px;letter-spacing:normal}.share-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.share-actions button{flex:1;min-height:44px;justify-content:center;padding:8px 12px;font-size:9px}.share-profile{font-size:10px!important}.share-profile a{color:var(--yellow)}
