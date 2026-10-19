@@ -678,7 +678,7 @@ document.getElementById('brand-home').addEventListener('click', event => { event
 document.getElementById('return-home').addEventListener('click', returnHome);
 document.getElementById('unknown-song').addEventListener('click', () => {
   const track = tracks[Math.floor(Math.random() * tracks.length)];
-  window.open(spotifySearchUrl(track), '_blank', 'noopener,noreferrer');
+  window.open(spotifyTrackUrl(track), '_blank', 'noopener,noreferrer');
 });
 document.querySelectorAll('[data-next]').forEach(button => button.addEventListener('click', () => goTo(button.dataset.next)));
 document.querySelectorAll('[data-back]').forEach(button => button.addEventListener('click', () => goTo(button.dataset.back)));
