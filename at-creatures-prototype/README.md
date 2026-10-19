@@ -14,6 +14,8 @@ Samostatný front-endový prototyp fanouškovské aplikace Atari Terror ve vizu�
 - Galerie uložených obrázků obsahující výhradně karty; galerie umožňuje kartu stáhnout nebo odebrat.
 - Veřejná ukázková galerie pod úvodní obrazovkou. Zobrazuje čtyři demo karty a karty uložené v tomto prohlížeči; kliknutím se karta zvětší.
 - Stažení karty a znaku jako SVG, s odkazy na vybrané skladby přímo v kartě. Výsledek lze připravit jako PNG pro Instagram (feed 4:5, příběh 9:16, čtverec) nebo Facebook (příspěvek 1,91:1, příběh 9:16, čtverec). Součástí sdílení je popisek s odkazy na zvolené skladby, aplikaci a oficiální profil kapely podle vybrané sítě.
+- Ve sdílecím dialogu lze dopsat vlastní text, který se zobrazí na obrázku i v připraveném popisku. Patička odkazuje na náhled kapelního dashboardu v `dashboard.html`; přihlašovací pole jsou prázdná, přihlášení není aktivní a náhled lze otevřít bez něj.
+- Prototyp lokálně zaznamenává začátek tvorby, dokončení bytosti, výběry skladeb, odchozí kliknutí na Spotify a fanouškem potvrzená sdílení rozdělená podle sítě. Dashboard tyto události zobrazuje pouze z aktuálního prohlížeče.
 - Výtvarná bible světa je v `ATARI_TERROR_WORLD.md`.
 - Odkaz na existující náhled AT Shopu.
 - Responzivní zobrazení pro mobil i desktop.
@@ -22,6 +24,7 @@ Samostatný front-endový prototyp fanouškovské aplikace Atari Terror ve vizu�
 
 - Sdílecí obrázek obsahuje viditelné adresy profilů a názvy zvolených skladeb; klikací odkazy jsou dostupné v digitální SVG kartě a v připraveném popisku. Samotný PNG obrázek sociální sítě klikací odkazy nepřenáší.
 - Generování probíhá lokálně v prohlížeči. Aplikace neposílá volby ani osobní údaje na server.
+- Lokální měření není společná analytika; kliknutí na Spotify nepotvrzuje přehrání skladby. Sdílení podle sítě jsou potvrzení fanouška, protože aplikace bez propojení s účty sociálních sítí nemůže ověřit zveřejněný příspěvek.
 - Galerie ukládá karty do místního úložiště prohlížeče; zobrazí je pouze na zařízení a v profilu daného prohlížeče.
 - Veřejné karty napříč návštěvníky vyžadují serverovou databázi a výslovný souhlas autorů. V tomto prototypu jsou čtyři ukázkové karty a lokálně uložené karty.
 - Plakát je náhled a koncertní QR karta je dekorativní ukázka, nikoli platná vstupenka či slevový kód.
