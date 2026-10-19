@@ -1,34 +1,38 @@
 // Atari Terror tracks from Part 3: Final Warning and Part2: Attention!.
 const tracks = [
   ...[
-    ['Eve', 'Part 3: Final Warning'],
-    ['Ghost of the Bloodbath', 'Part 3: Final Warning'],
-    ['Bright Sun', 'Part 3: Final Warning'],
-    ['Mother', 'Part 3: Final Warning'],
-    ['Insane', 'Part 3: Final Warning'],
-    ['Oh My God', 'Part 3: Final Warning'],
-    ['Stuck to the Tit', 'Part 3: Final Warning'],
-    ['Great Pain', 'Part 3: Final Warning'],
-    ['Cereal Killer', 'Part 3: Final Warning'],
-    ['Dance Machine', 'Part 3: Final Warning'],
-    ['This Is the Day', 'Part 3: Final Warning'],
-    ['The Wicked Hand', 'Part 3: Final Warning'],
-    ['The Beginning', 'Part2: Attention!'],
-    ['Attention!', 'Part2: Attention!'],
-    ['Wonderful Underground', 'Part2: Attention!'],
-    ['Motofoko', 'Part2: Attention!'],
-    ['Chosen One', 'Part2: Attention!'],
-    ['Only', 'Part2: Attention!'],
-    ['Airbag Death', 'Part2: Attention!'],
-    ['Fight for Your Country', 'Part2: Attention!'],
-    ['Honey Honey', 'Part2: Attention!'],
-    ['Sweetest Pie', 'Part2: Attention!'],
-    ['Sky Burning', 'Part2: Attention!'],
-    ['Carramba', 'Part2: Attention!'],
-    ['War', 'Part2: Attention!'],
-    ['Bleeding Tree', 'Part2: Attention!']
-  ].map(([title, album]) => ({ title, album }))
+    ['Eve', 'Part 3: Final Warning', '1fMJ41l3Fn2Wdlmbl4HuTK'],
+    ['Ghost of the Bloodbath', 'Part 3: Final Warning', '1o6TdtMWDIkFxy1gpszxuT'],
+    ['Bright Sun', 'Part 3: Final Warning', '4GPNJDJOHYdzHGMneKmlt5'],
+    ['Mother', 'Part 3: Final Warning', '6SGfFjCcjmxA7uxfuvw6ig'],
+    ['Insane', 'Part 3: Final Warning', '3Sm12aKhqQk6Ifwrdimhzj'],
+    ['Oh My God', 'Part 3: Final Warning', '4SoHlrwSXgizLW6XABYlzK'],
+    ['Stuck to the Tit', 'Part 3: Final Warning', '1xWvq7quWp6CKvLBYUUnL1'],
+    ['Great Pain', 'Part 3: Final Warning', '1gtmwHBT82KalAq07WA0Kx'],
+    ['Cereal Killer', 'Part 3: Final Warning', '604zadcoOWvPiQx2JzR2DL'],
+    ['Dance Machine', 'Part 3: Final Warning', '4r0T0vhv33beNqZEkzBtoV'],
+    ['This Is the Day', 'Part 3: Final Warning', '0O7ufTzlaEHq7xyrBPgcgs'],
+    ['The Wicked Hand', 'Part 3: Final Warning', '076UBpyLvfNualnNRCyPdb'],
+    ['The Beginning', 'Part2: Attention!', '0r2parFEQPiaKUjr7EsA7z'],
+    ['Attention!', 'Part2: Attention!', '7shiLLV9KtcRLcrCwoCNgH'],
+    ['Wonderful Underground', 'Part2: Attention!', '1usykVrwThwSWb6fUqvGmH'],
+    ['Motofoko', 'Part2: Attention!', '5PW6Mc3y1UwaBSGOzd9Ptl'],
+    ['Chosen One', 'Part2: Attention!', '3VuN7aG4mKMiAIZ4XCnFGY'],
+    ['Only', 'Part2: Attention!', '69TtgKofPocc2Vx3kytKkE'],
+    ['Airbag Death', 'Part2: Attention!', '1zTZnIanEfVDJzNGfxGicd'],
+    ['Fight for Your Country', 'Part2: Attention!', '0KKyTdeavSSskmk611QdzL'],
+    ['Honey Honey', 'Part2: Attention!', '4AAe7rSdYA2d6fX9komWjj'],
+    ['Sweetest Pie', 'Part2: Attention!', '1d3xOBWl0n8RvVj60Ipq1d'],
+    ['Sky Burning', 'Part2: Attention!', '4e9Ic0KEd2b922Y5amikvW'],
+    ['Carramba', 'Part2: Attention!', '6XNYD6Z1oYhASWRzsuqGcU'],
+    ['War', 'Part2: Attention!', '0UUwgQXDAerIuHRj87b882'],
+    ['Bleeding Tree', 'Part2: Attention!', '6u4aAyPogGydLZU8sPL0RP']
+  ].map(([title, album, spotifyId]) => ({ title, album, spotifyId }))
 ];
+const officialProfiles = {
+  instagram: 'https://www.instagram.com/atari_terror_oficialni/',
+  facebook: 'https://www.facebook.com/atariterror/'
+};
 const selectedSongs = new Set();
 const archetypes = [
   { name: 'REZAVÝ PROROK', faction: 'NOČNÍ SIGNÁL · HLÍDAČ', quote: '„Drží směr, i když se okolní svět rozpadá.“', description: 'Zrozená z hluku a neústupnosti. Nečeká na povolení — ukáže cestu a jde první.', symbol: '✦' },
@@ -328,7 +332,7 @@ function renderTracks() {
         <span class="song-album">${track.album}</span>
         <span class="song-mark" aria-hidden="true">+</span>
       </button>
-      <a class="song-spotify" href="${spotifySearchUrl(track)}" target="_blank" rel="noopener noreferrer" aria-label="Otevřít ${track.title} na Spotify">SPOTIFY <svg class="line-arrow" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 14 14 4M6 4h8v8"/></svg></a>
+      <a class="song-spotify" href="${spotifyTrackUrl(track)}" target="_blank" rel="noopener noreferrer" aria-label="Otevřít ${track.title} na Spotify">SPOTIFY <svg class="line-arrow" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 14 14 4M6 4h8v8"/></svg></a>
     </div>`).join('');
   songList.addEventListener('click', event => {
     const button = event.target.closest('[data-track-index]');
@@ -342,6 +346,9 @@ function renderTracks() {
 }
 function spotifySearchUrl(track) {
   return `https://open.spotify.com/search/${encodeURIComponent(`Atari Terror ${track.title}`)}`;
+}
+function spotifyTrackUrl(track) {
+  return track.spotifyId ? `https://open.spotify.com/track/${track.spotifyId}` : spotifySearchUrl(track);
 }
 function renderSongSelection() {
   document.getElementById('song-count').textContent = selectedSongs.size;
@@ -407,9 +414,19 @@ function generateCreature(reroll) {
   document.getElementById('creature-desc').textContent = [generated.description, ...readings].join(' ');
   const interpretation = document.getElementById('song-interpretation');
   interpretation.hidden = !songProfiles.length;
-  interpretation.textContent = songProfiles.length
-    ? `Výtvarné motivy: ${songProfiles.map(profile => profile.spark).join(' · ')}${songProfiles.some(profile => profile.lyricBasis === 'title-only') ? ' · U některých vybraných skladeb se text na zdroji nezobrazil; jejich motiv je odvozený z názvu.' : ''}`
-    : '';
+  interpretation.replaceChildren();
+  if (songProfiles.length) {
+    const label = document.createElement('span');
+    label.textContent = `Výtvarné motivy: ${songProfiles.map(profile => profile.spark).join(' · ')} · Skladby: `;
+    interpretation.append(label);
+    songProfiles.forEach((profile, index) => {
+      if (index) interpretation.append(document.createTextNode(' · '));
+      const link = document.createElement('a');
+      link.href = spotifyTrackUrl(profile); link.target = '_blank'; link.rel = 'noopener noreferrer';
+      link.textContent = profile.title; interpretation.append(link);
+    });
+    if (songProfiles.some(profile => profile.lyricBasis === 'title-only')) interpretation.append(document.createTextNode(' · Některé motivy jsou odvozeny z názvu skladby.'));
+  }
   document.getElementById('creature-code').textContent = `AT—${String(seed + generationCount).padStart(3, '0')}`;
   document.getElementById('tag-age').textContent = age.toUpperCase();
   document.getElementById('tag-presentation').textContent = presentation.toUpperCase();
@@ -435,14 +452,82 @@ function cardSvg() {
   const quote = generated.quote.replace(/[“”]/g, '&quot;');
   const palette = ['#d84a38', '#d4b63f'];
   const sigilName = sigilNames[generated.symbol] || 'SIGNÁL';
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500"><defs><linearGradient id="cardbg" x2="0" y2="1"><stop stop-color="#27231f"/><stop offset="1" stop-color="#11100f"/></linearGradient></defs><rect width="1200" height="1500" fill="url(#cardbg)"/><path d="M36 36h1128v1428H36z" fill="none" stroke="#d4b63f" stroke-width="3"/><path d="M57 57h1086v1386H57z" fill="none" stroke="#e7d9b9" stroke-opacity=".24" stroke-width="1"/><svg x="116" y="78" width="968" height="1035" viewBox="0 0 900 900">${creaturePortraitSvg(generated).replace(/^<svg[^>]*>|<\/svg>$/g, '')}</svg><path d="M90 1130h1020" stroke="${palette[0]}" stroke-width="3"/><text x="600" y="1162" text-anchor="middle" fill="#d4b63f" font-size="15" font-family="Arial" letter-spacing="5">ZNAK SMEČKY</text><circle cx="600" cy="1205" r="31" fill="#171512" stroke="#d4b63f" stroke-width="2"/><text x="600" y="1219" text-anchor="middle" fill="#f1e6cd" font-size="38" font-family="Georgia,serif">${generated.symbol}</text><text x="600" y="1254" text-anchor="middle" fill="#c2b8a5" font-size="13" font-family="Arial" letter-spacing="4">${sigilName}</text><text x="600" y="1312" text-anchor="middle" fill="#f1e6cd" font-size="57" font-family="Georgia,serif" font-weight="bold" letter-spacing="2">${title}</text><text x="600" y="1355" text-anchor="middle" fill="#d4b63f" font-size="20" font-family="Arial" letter-spacing="4">${generated.faction}</text><text x="600" y="1402" text-anchor="middle" fill="#c2b8a5" font-size="18" font-family="Georgia,serif">${quote}</text><text x="600" y="1456" text-anchor="middle" fill="#898174" font-size="15" font-family="Arial" letter-spacing="4">${age} · ${pres} · AT—${String(generationCount + 1).padStart(3, '0')}</text></svg>`;
+  const songs = (generated.songProfiles || []).slice(0, 4).map((track, i) => `<a href="${spotifyTrackUrl(track)}" target="_blank"><text x="${250 + i * 230}" y="1430" text-anchor="middle" fill="#d4b63f" font-size="13" font-family="Arial">♫ ${xmlEscape(track.title)}</text></a>`).join('');
+  const art = (generated.artworkData || new URL(creatureArtworkPaths[generated.artworkIndex] || creatureArtworkPaths[0], document.baseURI).href);
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="1500" viewBox="0 0 1200 1500"><defs><linearGradient id="cardbg" x2="0" y2="1"><stop stop-color="#27231f"/><stop offset="1" stop-color="#11100f"/></linearGradient></defs><rect width="1200" height="1500" fill="url(#cardbg)"/><path d="M36 36h1128v1428H36z" fill="none" stroke="#d4b63f" stroke-width="3"/><path d="M57 57h1086v1386H57z" fill="none" stroke="#e7d9b9" stroke-opacity=".24" stroke-width="1"/><image href="${xmlEscape(art)}" x="116" y="78" width="968" height="1035" preserveAspectRatio="xMidYMid slice"/><path d="M90 1130h1020" stroke="${palette[0]}" stroke-width="3"/><text x="600" y="1162" text-anchor="middle" fill="#d4b63f" font-size="15" font-family="Arial" letter-spacing="5">ZNAK SMEČKY</text><circle cx="600" cy="1205" r="31" fill="#171512" stroke="#d4b63f" stroke-width="2"/><text x="600" y="1219" text-anchor="middle" fill="#f1e6cd" font-size="38" font-family="Georgia,serif">${xmlEscape(generated.symbol)}</text><text x="600" y="1254" text-anchor="middle" fill="#c2b8a5" font-size="13" font-family="Arial" letter-spacing="4">${xmlEscape(sigilName)}</text><text x="600" y="1312" text-anchor="middle" fill="#f1e6cd" font-size="57" font-family="Georgia,serif" font-weight="bold" letter-spacing="2">${xmlEscape(title)}</text><text x="600" y="1355" text-anchor="middle" fill="#d4b63f" font-size="20" font-family="Arial" letter-spacing="4">${xmlEscape(generated.faction)}</text><text x="600" y="1398" text-anchor="middle" fill="#c2b8a5" font-size="16" font-family="Georgia,serif">${xmlEscape(quote)}</text>${songs}<text x="600" y="1460" text-anchor="middle" fill="#898174" font-size="12" font-family="Arial">ATARI TERROR CREATURES · ${xmlEscape(officialProfiles.instagram)}</text><text x="600" y="1482" text-anchor="middle" fill="#898174" font-size="11" font-family="Arial">${xmlEscape(age)} · ${xmlEscape(pres)} · AT—${String(generationCount + 1).padStart(3, '0')}</text></svg>`;
 }
+function xmlEscape(value) { return String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&apos;'); }
 function downloadSvg(name, svg = cardSvg()) {
   const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url; anchor.download = name; anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+const shareFormats = {
+  instagram: { feed: [1080, 1350, 'Příspěvek 4:5'], story: [1080, 1920, 'Příběh 9:16'], square: [1080, 1080, 'Čtverec 1:1'] },
+  facebook: { feed: [1200, 630, 'Příspěvek 1.91:1'], story: [1080, 1920, 'Příběh 9:16'], square: [1080, 1080, 'Čtverec 1:1'] }
+};
+function socialCardSvg(platform, format) {
+  const [width, height] = shareFormats[platform]?.[format] || shareFormats.instagram.feed;
+  const margin = Math.round(width * .055);
+  const portrait = height > width * 1.1;
+  const artTop = portrait ? Math.round(height * .055) : Math.round(height * .08);
+  const footerHeight = portrait ? Math.round(height * .31) : Math.round(height * .68);
+  const artHeight = height - footerHeight - artTop - margin;
+  const artWidth = width - margin * 2;
+  const art = generated.artworkData || new URL(creatureArtworkPaths[generated.artworkIndex] || creatureArtworkPaths[0], document.baseURI).href;
+  const footerTop = artTop + artHeight + margin;
+  const footerCenter = width / 2;
+  const titleSize = Math.max(28, Math.round(width * (portrait ? .064 : .058)));
+  const songList = (generated.songProfiles || []).slice(0, 5).map((track, i) => `<a href="${spotifyTrackUrl(track)}"><text x="${margin + 20}" y="${footerTop + (portrait ? 146 : 118) + i * Math.max(20, Math.round(width * .027))}" fill="#eee6d5" font-family="Arial" font-size="${Math.max(15, Math.round(width * .019))}">♫  ${xmlEscape(track.title)}</text></a>`).join('');
+  const profile = officialProfiles[platform];
+  return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#24211c"/><stop offset="1" stop-color="#090909"/></linearGradient></defs><rect width="100%" height="100%" fill="url(#bg)"/><rect x="${Math.round(margin*.42)}" y="${Math.round(margin*.42)}" width="${width - margin*.84}" height="${height - margin*.84}" fill="none" stroke="#d4b63f" stroke-width="2"/><image href="${xmlEscape(art)}" x="${margin}" y="${artTop}" width="${artWidth}" height="${artHeight}" preserveAspectRatio="xMidYMid slice"/><path d="M${margin} ${footerTop}h${artWidth}" stroke="#d84a38" stroke-width="3"/><text x="${footerCenter}" y="${footerTop + 34}" text-anchor="middle" fill="#d4b63f" font-family="Arial" font-size="${Math.max(13, Math.round(width*.018))}" letter-spacing="4">ZNAK SMEČKY · ${xmlEscape(generated.symbol)} ${xmlEscape(sigilNames[generated.symbol] || 'SIGNÁL')}</text><text x="${footerCenter}" y="${footerTop + (portrait ? 102 : 78)}" text-anchor="middle" fill="#f1e6cd" font-family="Georgia,serif" font-weight="bold" font-size="${titleSize}">${xmlEscape(generated.name)}</text><text x="${footerCenter}" y="${footerTop + (portrait ? 130 : 104)}" text-anchor="middle" fill="#d4b63f" font-family="Arial" font-size="${Math.max(13, Math.round(width*.018))}" letter-spacing="2">${xmlEscape(generated.faction)}</text>${songList}<text x="${footerCenter}" y="${height - margin * .95}" text-anchor="middle" fill="#c2b8a5" font-family="Arial" font-size="${Math.max(12, Math.round(width*.015))}">ATARI TERROR CREATURES · ${xmlEscape(profile)}</text></svg>`;
+}
+async function downloadSocialImage(platform, format) {
+  const svg = socialCardSvg(platform, format);
+  const [width, height] = shareFormats[platform][format];
+  const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+  const svgUrl = URL.createObjectURL(svgBlob);
+  try {
+    const image = new Image();
+    image.src = svgUrl;
+    await image.decode();
+    const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+    const context = canvas.getContext('2d'); context.drawImage(image, 0, 0, width, height);
+    const png = await new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('PNG export failed')), 'image/png'));
+    const pngUrl = URL.createObjectURL(png);
+    const anchor = document.createElement('a'); anchor.href = pngUrl; anchor.download = `at-creature-${platform}-${format}.png`; anchor.click();
+    setTimeout(() => URL.revokeObjectURL(pngUrl), 2000);
+  } catch {
+    downloadSvg(`at-creature-${platform}-${format}.svg`, svg);
+  } finally { URL.revokeObjectURL(svgUrl); }
+}
+function shareCaption(platform) {
+  const tracksLine = (generated.songProfiles || []).map(track => `${track.title}: ${spotifyTrackUrl(track)}`).join('\n');
+  return `Moje Atari Terror bytost: ${generated.name} ${generated.symbol}\n${generated.quote}\n${tracksLine ? `Moje soundtrack skladby:\n${tracksLine}\n` : ''}Najdi si svou bytost: ${location.href}\nAtari Terror: ${officialProfiles[platform]}`;
+}
+function showShareDialog() {
+  const dialog = document.getElementById('preview-dialog');
+  dialog.classList.remove('community-gallery-lightbox');
+  document.getElementById('dialog-content').innerHTML = `<section class="share-panel"><p class="eyebrow">SDÍLEJ SVOU BYTOST</p><h2>PŘIPRAVIT KARTU</h2><p>Stáhne se obrázek ve velikosti vybrané sítě. Odkazy na skladby a profil kapely přidej do popisku příspěvku.</p><label>PLATFORMA<select id="share-platform"><option value="instagram">Instagram</option><option value="facebook">Facebook</option></select></label><label>FORMÁT<select id="share-format"><option value="feed">Příspěvek 4:5</option><option value="story">Příběh 9:16</option><option value="square">Čtverec 1:1</option></select></label><div class="share-actions"><button class="primary-button" id="download-share-image" type="button">STÁHNOUT OBRÁZEK ↓</button><button class="secondary-button" id="copy-share-caption" type="button">KOPÍROVAT POPISEK</button></div><p class="share-profile">Oficiální profil: <a id="share-profile-link" href="${officialProfiles.instagram}" target="_blank" rel="noopener noreferrer">Instagram Atari Terror ↗</a></p><p class="feedback" id="share-feedback" role="status" aria-live="polite"></p></section>`;
+  const platform = document.getElementById('share-platform');
+  const format = document.getElementById('share-format');
+  const profileLink = document.getElementById('share-profile-link');
+  const sync = () => {
+    const isInstagram = platform.value === 'instagram';
+    format.options[0].textContent = isInstagram ? 'Příspěvek 4:5' : 'Příspěvek 1.91:1';
+    profileLink.href = officialProfiles[platform.value];
+    profileLink.textContent = `${isInstagram ? 'Instagram' : 'Facebook'} Atari Terror ↗`;
+  };
+  platform.addEventListener('change', sync); sync();
+  document.getElementById('download-share-image').addEventListener('click', () => downloadSocialImage(platform.value, format.value));
+  document.getElementById('copy-share-caption').addEventListener('click', async () => {
+    const feedback = document.getElementById('share-feedback');
+    try { await navigator.clipboard.writeText(shareCaption(platform.value)); feedback.textContent = 'Popisek včetně odkazů na skladby a oficiální profil je zkopírovaný.'; }
+    catch { feedback.textContent = shareCaption(platform.value); }
+  });
+  dialog.showModal();
 }
 function readGallery() {
   try { return JSON.parse(localStorage.getItem(galleryKey) || '[]'); }
@@ -633,14 +718,7 @@ document.getElementById('gallery-grid').addEventListener('click', event => {
     renderTrending();
   }
 });
-document.getElementById('share-card').addEventListener('click', async () => {
-  const feedback = document.getElementById('feedback');
-  try {
-    if (navigator.share) await navigator.share({ title: `Moje AT bytost: ${generated.name}`, text: generated.quote, url: location.href });
-    else if (navigator.clipboard) { await navigator.clipboard.writeText(`${generated.name} — ${generated.quote} ${location.href}`); feedback.textContent = 'Odkaz a jméno zkopírovány.'; }
-    else feedback.textContent = 'Sdílení není v tomto prohlížeči dostupné.';
-  } catch (error) { if (error.name !== 'AbortError') feedback.textContent = 'Sdílení se nepodařilo.'; }
-});
+document.getElementById('share-card').addEventListener('click', showShareDialog);
 document.querySelectorAll('[data-output]').forEach(button => button.addEventListener('click', () => {
   const dialog = document.getElementById('preview-dialog');
   const content = document.getElementById('dialog-content');
