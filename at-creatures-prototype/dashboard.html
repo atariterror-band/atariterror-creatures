@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <title>AT Creatures — dashboard kapely</title>
+  <style>
+    :root{color-scheme:dark;--bg:#080808;--panel:#151513;--line:#393832;--yellow:#ffd21a;--paper:#f0eadb;--muted:#a8a397;--red:#da4938}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--paper);font:14px/1.5 Arial,sans-serif}a{color:inherit}.wrap{width:min(1180px,calc(100% - 44px));margin:auto}.top{height:76px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}.brand{font-size:14px;font-weight:900;letter-spacing:.14em}.brand span{color:var(--yellow)}.back{color:var(--yellow);text-decoration:none;font-size:10px;font-weight:800;letter-spacing:.12em}.intro{padding:45px 0 25px}.eyebrow{margin:0 0 9px;color:var(--yellow);font-size:10px;font-weight:900;letter-spacing:.16em}.intro h1{margin:0;font-size:clamp(28px,5vw,50px);line-height:1.02;letter-spacing:-.04em}.intro p:last-child{max-width:700px;color:var(--muted);font-size:13px}.login{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;padding:22px;background:var(--panel);border:1px solid var(--line)}.login-copy strong{display:block;font-size:13px}.login-copy p{margin:5px 0 0;color:var(--muted);font-size:11px}.login-form{display:flex;gap:8px;align-items:center}.login-form input{width:180px;padding:12px;background:#090909;color:var(--paper);border:1px solid #59574f;font:inherit;font-size:12px}.login-form button,.preview-button{min-height:42px;border:0;background:var(--yellow);color:#080808;padding:0 16px;font-size:10px;font-weight:900;letter-spacing:.08em;cursor:pointer}.preview-button{margin-top:12px;background:transparent;color:var(--yellow);border:1px solid #83721c}.notice{display:flex;gap:9px;align-items:center;margin-top:15px;color:var(--muted);font-size:10px}.notice b{color:var(--yellow)}.dash{display:none;padding:30px 0 70px}.dash.open{display:block}.dash-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:16px}.dash-head h2{margin:0;font-size:24px}.demo-tag{padding:7px 9px;border:1px solid #79671b;color:var(--yellow);font-size:9px;font-weight:800;letter-spacing:.1em}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric,.panel{background:var(--panel);border:1px solid var(--line);padding:18px}.metric-label{color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.1em}.metric-value{display:block;margin:9px 0 3px;font-size:34px;font-weight:800;line-height:1}.metric-note{color:var(--muted);font-size:10px}.dash-columns{display:grid;grid-template-columns:1.1fr .9fr;gap:10px;margin-top:10px}.panel h3{margin:0 0 5px;font-size:14px}.panel>p{margin:0 0 18px;color:var(--muted);font-size:10px}.rows{display:grid;gap:14px}.row{display:grid;grid-template-columns:minmax(105px,1fr) 2fr auto;gap:10px;align-items:center;font-size:11px}.bar{height:7px;background:#302e29;overflow:hidden}.bar i{display:block;height:100%;background:var(--yellow)}.empty{padding:14px;background:#0b0b0a;border-left:2px solid var(--red);color:var(--muted);font-size:11px}.event-list{display:grid;gap:8px}.event-line{display:flex;justify-content:space-between;gap:15px;padding-bottom:8px;border-bottom:1px solid #ffffff12;color:var(--muted);font-size:11px}.event-line b{color:var(--paper)}.footnote{margin:18px 0;color:var(--muted);font-size:10px}.footnote b{color:var(--yellow)}
+    @media(max-width:780px){.login{grid-template-columns:1fr}.login-form{flex-wrap:wrap}.login-form input{flex:1;min-width:130px;width:auto}.grid{grid-template-columns:repeat(2,1fr)}.dash-columns{grid-template-columns:1fr}.dash-head{align-items:start;flex-direction:column}.row{grid-template-columns:minmax(90px,1fr) 1.3fr auto}.wrap{width:min(100% - 28px,1180px)}.top{height:64px}}
+  </style>
+</head>
+<body>
+  <header class="top wrap"><a class="brand" href="index.html">ATARI TERROR <span>CREATURES</span></a><a class="back" href="index.html">← ZPĚT DO APLIKACE</a></header>
+  <main class="wrap">
+    <section class="intro"><p class="eyebrow">AT CREATURES / PROTOTYP</p><h1>DASHBOARD<br>KAPELY</h1><p>Přehled toho, jak fanoušci objevují skladby, tvoří bytosti a připravují obsah ke sdílení.</p></section>
+    <section class="login" aria-label="Přihlášení do dashboardu">
+      <div class="login-copy"><strong>PŘIHLÁŠENÍ PRO ČLENY KAPELY</strong><p>Přihlášení zatím není zapojené. Pole zůstávají prázdná.</p><button class="preview-button" id="open-preview" type="button">PROHLÉDNOUT SI NÁHLED DASHBOARDU ↓</button></div>
+      <form class="login-form" id="login-form"><input type="email" autocomplete="username" placeholder="E-mail" aria-label="E-mail"><input type="password" autocomplete="current-password" placeholder="Heslo" aria-label="Heslo"><button type="submit">PŘIHLÁSIT SE</button></form>
+    </section>
+    <p class="notice"><b>NEVEŘEJNÝ PROTOTYP</b><span>Náhled zůstává uvnitř prototypu. Čísla níže jsou pouze lokální údaje tohoto prohlížeče.</span></p>
+    <section class="dash" id="dashboard" aria-labelledby="dash-title">
+      <div class="dash-head"><div><p class="eyebrow">PŘEHLED AKTIVITY</p><h2 id="dash-title">CO SE DĚJE V CREATURES</h2></div><span class="demo-tag">LOKÁLNÍ NÁHLED · NEŽIVÁ DATA</span></div>
+      <div class="grid">
+        <article class="metric"><span class="metric-label">ZAČALI TVORBU</span><strong class="metric-value" id="starts">0</strong><span class="metric-note">otevření generátoru v tomto prohlížeči</span></article>
+        <article class="metric"><span class="metric-label">DOKONČILI BYTOST</span><strong class="metric-value" id="creations">0</strong><span class="metric-note" id="completion-rate">bez dokončené tvorby</span></article>
+        <article class="metric"><span class="metric-label">ODKAZY NA SPOTIFY</span><strong class="metric-value" id="spotify-clicks">0</strong><span class="metric-note">kliknutí ven, ne potvrzené přehrání</span></article>
+        <article class="metric"><span class="metric-label">POTVRZENÁ SDÍLENÍ</span><strong class="metric-value" id="share-actions">0</strong><span class="metric-note">fanoušek potvrdil sdílení po zveřejnění</span></article>
+      </div>
+      <div class="dash-columns">
+        <section class="panel"><h3>SKLADBY, KTERÉ FANOUŠCI VYBÍRALI</h3><p>Počítá se výběr odeslaný při tvorbě bytosti.</p><div class="rows" id="song-ranks"></div></section>
+        <section class="panel"><h3>KAM BYTOSTI OPRAVDU SDÍLELI</h3><p>Rozpad podle sítě, kterou fanoušek potvrdil po zveřejnění příspěvku.</p><div class="event-list" id="share-breakdown"></div></section>
+      </div>
+      <div class="dash-columns">
+        <section class="panel"><h3>CESTA APLIKACÍ</h3><p>Základní signály, které ukazují, kde se zážitek přerušuje.</p><div class="event-list" id="funnel"></div></section>
+        <section class="panel"><h3>JAK SE SDÍLENÍ ZAZNAMENÁ</h3><p>Prototyp neumí ověřit příspěvek přímo na sociální síti.</p><div class="empty">Po zveřejnění fanoušek v aplikaci potvrdí, že kartu sdílel, a vybere síť. Dashboard pak ukáže tato potvrzení. Pro souhrn od více lidí bude potřeba serverové měření.</div></section>
+      </div>
+      <p class="footnote"><b>Prototypové měření:</b> události se ukládají pouze do localStorage tohoto prohlížeče. Neodesílají se na server a nepředstavují skutečnou návštěvnost kapely.</p>
+    </section>
+  </main>
+  <script>
+    const key='at-creatures-analytics-v1';
+    const readEvents=()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}};
+    const count=(events,type)=>events.filter(e=>e.type===type).length;
+    const row=(label,value,max)=>`<div class="row"><span>${label}</span><div class="bar"><i style="width:${max?Math.max(3,Math.round(value/max*100)):0}%"></i></div><b>${value}</b></div>`;
+    function render(){
+      const events=readEvents();const starts=count(events,'app_started');const creations=count(events,'creature_created');const spotify=count(events,'spotify_outbound_click');const confirmedShares=events.filter(e=>e.type==='share_confirmed');
+      document.querySelector('#starts').textContent=starts;document.querySelector('#creations').textContent=creations;document.querySelector('#spotify-clicks').textContent=spotify;document.querySelector('#share-actions').textContent=confirmedShares.length;
+      document.querySelector('#completion-rate').textContent=starts?`${Math.round(creations/starts*100)} % zahájených tvorbou prošlo až k výsledku`:'zatím bez zahájených návštěv';
+      const songs={};events.filter(e=>e.type==='songs_selected').forEach(e=>(e.tracks||[]).forEach(t=>songs[t]=(songs[t]||0)+1));
+      const sorted=Object.entries(songs).sort((a,b)=>b[1]-a[1]).slice(0,8);const max=Math.max(0,...sorted.map(x=>x[1]));
+      document.querySelector('#song-ranks').innerHTML=sorted.length?sorted.map(([name,n])=>row(name,n,max)).join(''):'<div class="empty">Výběry skladeb se objeví po vytvoření první bytosti s vybranou skladbou.</div>';
+      const channelNames={instagram:'Instagram',facebook:'Facebook',whatsapp:'WhatsApp',tiktok:'TikTok',x:'X',other:'Jinde / zpráva'};
+      const channels={};confirmedShares.forEach(e=>{const key=e.platform||'other';channels[key]=(channels[key]||0)+1});
+      const channelRows=Object.entries(channels).sort((a,b)=>b[1]-a[1]).map(([key,n])=>`<div class="event-line"><span>${channelNames[key]||key}</span><b>${n}</b></div>`).join('');
+      document.querySelector('#share-breakdown').innerHTML=channelRows||'<div class="empty">Zatím tu nejsou potvrzená sdílení. Příprava obrázku ani kopie popisku se do tohoto přehledu nepočítá.</div>';
+      document.querySelector('#funnel').innerHTML=`<div class="event-line"><span>Začali tvorbu</span><b>${starts}</b></div><div class="event-line"><span>Vybrali skladby</span><b>${count(events,'songs_selected')}</b></div><div class="event-line"><span>Vytvořili bytost</span><b>${creations}</b></div><div class="event-line"><span>Potvrdili zveřejněné sdílení</span><b>${confirmedShares.length}</b></div>`;
+    }
+    document.querySelector('#open-preview').addEventListener('click',()=>{document.querySelector('#dashboard').classList.add('open');render();document.querySelector('#dashboard').scrollIntoView({behavior:'smooth',block:'start'})});
+    document.querySelector('#login-form').addEventListener('submit',e=>{e.preventDefault();alert('Přihlášení v tomto prototypu zatím není zapojené. Náhled otevřete samostatným tlačítkem.')});
+  </script>
+</body>
+</html>
